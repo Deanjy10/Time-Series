@@ -1,0 +1,68 @@
+---
+title: "MTH6139 Time Series"
+subtitle: "Coursework 1"
+author:
+- name: Adesola Dada
+date: "March 2024"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r, echo=FALSE}
+htmltools::img(src = knitr::image_uri("QMlogo.png"), 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; padding:10px; width:30%;')
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Meta’s Prophet forecasting system
+
+I will use Meta’s Prophet forecasting system to predict future values of data. I will be using the "co2" time series which contains 486 monthly observations of the Mauna Loa atmospheric concentrations of CO2.
+
+```{r}
+#install.packages("prophet")
+# This installs the forecasting system that will be used.
+
+
+co2.dataframe= data.frame(
+  ds=zoo::as.yearmon(time(co2)),
+  y=co2) #This makes the "co2" time series a data frame, which is needed to use the forecasting system.
+
+head(co2.dataframe) 
+```
+
+Here are the first few data points in the data frame.
+
+```{r message=FALSE, warning=FALSE}
+model= prophet::prophet(co2.dataframe) #This runs prophet with the data frame.
+
+future=prophet::make_future_dataframe(model, periods=12, freq="quarter") #This creates future dates for forecasting (precisely this predicts the future 12 quarters).
+
+prediction= predict(model, future) #This uses the forecasting model to predict future values.
+
+plot(model, prediction) 
+```
+
+This shows the forecasted values in blue on a plot.
+
+```{r}
+prophet::prophet_plot_components(model, prediction)
+```
+
+As we can see, there is a strongly positive correlation within the data, with clear yearly seasonality.
+
+Now I will forecast with the same 3 year prediction, but in years instead of quarters.
+```{r message=FALSE, warning=FALSE}
+future2=prophet::make_future_dataframe(model, periods=3, freq="year") #This creates future dates for forecasting (precisely this predicts the future 3 years).
+
+prediction2= predict(model, future2) #This uses the forecasting model to predict future values.
+
+plot(model, prediction2) 
+```
+
+This clearly shows that although we predicted the same period, due to the seasonality within the year, a smaller time period will produce more accurate/ believable results.
