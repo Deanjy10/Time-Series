@@ -1,0 +1,1 @@
+For a Time Series Module, I used Meta’s Prophet forecasting system to predict future values of data. I used the “co2” time series which contains 486 monthly observations of the Mauna Loa atmospheric concentrations of CO2.
